@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'screens/home/home_page.dart';
+import 'screens/login/login_page.dart';
+import 'screens/profile/setting_page.dart';
+import 'screens/profile/profile_page.dart';
+import 'screens/booking/booking_page.dart';
+import 'screens/notification/notification_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -8,31 +15,54 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Footer Menu App',
+      title: 'Tarot Booking App',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.purple,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+        ),
       ),
-      home: HomeScreen(),
+      home: LoginPage(),
+      supportedLocales: [
+        const Locale('vi', ''), 
+        const Locale('en', ''), 
+      ],
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      locale: const Locale('vi', ''),
     );
   }
 }
 
 class HomeScreen extends StatefulWidget {
+  final String readerId;
+
+  HomeScreen({required this.readerId}); 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0; // Tracks the index of the selected tab
+  int _selectedIndex = 0;
 
-  // Define a list of screens for the bottom navigation items
-  static List<Widget> _pages = <Widget>[
-    HomePage(),
-    ProfilePage(),
-    SettingsPage(),
-  ];
+  late List<Widget> _pages; 
 
-  // Function to handle tab changes
+  @override
+  void initState() {
+    super.initState();
+    _pages = <Widget>[
+      HomePage(readerId: widget.readerId), 
+      BookingPage(readerId: widget.readerId),
+      ProfilePage(readerId: widget.readerId), 
+      NotificationPage(readerId: widget.readerId),
+      SettingProfilePage(readerId: widget.readerId), 
+    ];
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -42,65 +72,35 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Footer Menu Example'),
-      ),
-      body: _pages[_selectedIndex], // Display the selected screen
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      body: Container(
+        decoration: BoxDecoration(
+          color: Colors.black,
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            title: Text('Tarot Booking App'),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+          body: _pages[_selectedIndex],
+          bottomNavigationBar: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+              BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Booking'),
+              BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+              BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notification'),
+              BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+            ],
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            selectedItemColor: const Color.fromARGB(255, 249, 152, 33),
+            unselectedItemColor: Colors.grey,
+            backgroundColor: Colors.black,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue, // Color when selected
-        onTap: _onItemTapped,
+        ),
       ),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Home Page',
-        style: TextStyle(fontSize: 24),
-      ),
-    );
-  }
-}
-
-class ProfilePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Profile Page',
-        style: TextStyle(fontSize: 24),
-      ),
-    );
-  }
-}
-
-class SettingsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Settings Page',
-        style: TextStyle(fontSize: 24),
-      ),
-    );
-  }
-}
